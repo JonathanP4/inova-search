@@ -42,13 +42,13 @@ export default function IdeasPage() {
 			<div className="mb-8">
 				<div className="flex items-center justify-between gap-6">
 					<h1 className="mb-1 text-3xl font-bold">Ideias</h1>
-					<div className="flex items-center gap-2 min-w-sm max-w-lg w-full">
+					<div className="flex items-center gap-4 max-w-lg w-full">
 						<Input
 							onChange={(e) => setSearchQuery(e.target.value)}
 							placeholder="Buscar"
 							type="text"
 						/>
-						<Button>
+						<Button className={"hidden md:block"}>
 							<Search />
 						</Button>
 					</div>

@@ -15,19 +15,20 @@ import {
 	Clock,
 	Send,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
 	const user = useAuth();
-	// const router = useRouter();
+
 	return (
 		<>
-			<main>
-				<section className="min-h-[calc(100svh-76px)] flex w-full items-center justify-evenly text-neutral-800">
+			<main className="p-6">
+				<section className="md:min-h-[calc(100svh-76px)] flex w-full items-center justify-evenly text-neutral-800">
 					<div className="max-w-lg space-y-6">
 						<p className="text-xs uppercase tracking-widest">
 							Ideias de automação para um futuro mais eficiente
 						</p>
-						<h1 className="text-6xl font-bold">
+						<h1 className="text-3xl md:text-6xl font-bold">
 							Sua empresa tem <br />
 							<span className="text-primary">um gargalo?</span>
 							<br />
@@ -35,7 +36,7 @@ export default function Home() {
 							<br />
 							<span className="text-primary">vira solução</span>
 						</h1>
-						<p>
+						<p className="text-sm md:text-base">
 							Cadastre ideias de automações que podem otimizar seus processos,
 							reduzir custos e aumentar a produtividade da sua empresa.
 						</p>
@@ -48,14 +49,14 @@ export default function Home() {
 							</Button>
 						</a>
 					</div>
-					<div>
+					<div className="absolute -z-10 opacity-20 md:relative md:opacity-100">
 						<img src="hero-image.png" alt="" />
 					</div>
 				</section>
 
 				<section
 					id="como_funciona"
-					className="p-12 bg-primary/5 rounded-t-4xl text-neutral-800 h-dvh flex flex-col justify-center space-y-12"
+					className="p-12 bg-primary/5 rounded-t-4xl text-neutral-800  flex flex-col justify-center space-y-12 mt-12 md:h-dvh  md:m-0"
 				>
 					<div>
 						<h1 className="text-3xl font-semibold mb-2">Como funciona?</h1>
@@ -64,9 +65,9 @@ export default function Home() {
 							podem tornar seus processos mais eficientes.
 						</p>
 					</div>
-					<div className="flex items-start justify-between gap-6 mt-12 h-max">
+					<div className="flex flex-col md:flex-row items-start justify-between gap-6 mt-12 h-max text-center md:text-left">
 						<div className="p-4 rounded-md max-w-xs">
-							<div className="p-3 bg-primary/10 rounded-2xl w-fit">
+							<div className="p-3 bg-primary/10 rounded-2xl w-fit m-auto md:m-0">
 								<Lightbulb size={80} className="text-primary" />
 							</div>
 							<h2 className="text-lg font-semibold my-4">
@@ -78,10 +79,13 @@ export default function Home() {
 							</p>
 						</div>
 						<div className="m-auto">
-							<ArrowRight className="text-primary" size={40} />
+							<ArrowRight
+								className="text-primary rotate-90 md:rotate-0"
+								size={40}
+							/>
 						</div>
 						<div className="p-4 rounded-md max-w-xs">
-							<div className="p-3 bg-primary/10 rounded-2xl w-fit">
+							<div className="p-3 bg-primary/10 rounded-2xl w-fit m-auto md:m-0">
 								<Heart size={80} className="text-primary" />
 							</div>
 							<h2 className="text-lg font-semibold my-4">Receba feedback</h2>
@@ -91,10 +95,13 @@ export default function Home() {
 							</p>
 						</div>
 						<div className="m-auto">
-							<ArrowRight className="text-primary" size={40} />
+							<ArrowRight
+								className="text-primary rotate-90 md:rotate-0"
+								size={40}
+							/>
 						</div>
 						<div className="p-4 rounded-md max-w-xs">
-							<div className="p-3 bg-primary/10 rounded-2xl w-fit">
+							<div className="p-3 bg-primary/10 rounded-2xl w-fit m-auto md:m-0">
 								<Users size={80} className="text-primary" />
 							</div>
 							<h2 className="text-lg font-semibold my-4">
@@ -106,10 +113,13 @@ export default function Home() {
 							</p>
 						</div>
 						<div className="m-auto">
-							<ArrowRight className="text-primary" size={40} />
+							<ArrowRight
+								className="text-primary rotate-90 md:rotate-0"
+								size={40}
+							/>
 						</div>
 						<div className="p-4 rounded-md max-w-xs">
-							<div className="p-3 bg-primary/10 rounded-2xl w-fit">
+							<div className="p-3 bg-primary/10 rounded-2xl w-fit m-auto md:m-0">
 								<TrendingUp size={80} className="text-primary" />
 							</div>
 							<h2 className="text-lg font-semibold my-4">
@@ -122,8 +132,11 @@ export default function Home() {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-[50px_1fr_2fr_1fr] gap-6 px-12 items-center bg-primary/10 p-6 rounded-full mt-12">
-						<BrainCircuit size={60} className="text-primary" />
+					<div className="space-y-6 mt-12 gap-6 items-center bg-primary/10 p-6 rounded-lg md:px-12 md:rounded-full md:space-y-0 md:grid md:grid-cols-[50px_1fr_2fr_1fr]">
+						<BrainCircuit
+							size={60}
+							className="text-primary m-auto mb-6 md:m-0 md:mb-0"
+						/>
 
 						<h2 className="text-2xl col-start-2 font-bold ml-6 text-slate-700">
 							Tem alguma ideia inovadora em mente?
@@ -133,14 +146,14 @@ export default function Home() {
 							Ela pode ser o próximo passo para sua empresa
 						</p>
 
-						<a href={`${!!user ? "/cadastro" : "/auth"}`}>
+						<Link href={`${!!user ? "/cadastro" : "/auth"}`}>
 							<Button
 								className={"p-5 rounded-full cursor-pointer text-popover"}
 							>
 								{!!user ? "Cadastrar ideia agora" : "Começe a usar agora"}
 								<ArrowRight />
 							</Button>
-						</a>
+						</Link>
 					</div>
 				</section>
 
@@ -148,7 +161,7 @@ export default function Home() {
 					id="vantagens"
 					className="p-12 rounded-t-4xl text-neutral-800 flex flex-col justify-center min-h-dvh"
 				>
-					<div className="flex items-center justify-evenly h-full">
+					<div className="flex flex-col items-center justify-evenly h-full md:flex-row">
 						<div className="max-w-md">
 							<p className="uppercase text-sm tracking-widest mb-6">
 								Vantagens
@@ -163,7 +176,7 @@ export default function Home() {
 							</p>
 							<img src="target.png" width={330} alt="target" />
 						</div>
-						<div className="grid grid-cols-2 gap-8">
+						<div className="grid md:grid-cols-2 gap-8 mt-12 md:mt-0">
 							<div className="border border-border rounded-md p-4 max-w-sm">
 								<div className="rounded-xl bg-primary/10 p-2 w-fit text-primary mb-4">
 									<Store size={50} />
@@ -204,9 +217,9 @@ export default function Home() {
 						</div>
 					</div>
 				</section>
-				<section className="px-12">
-					<div className="bg-teal-900 p-6 py-12 rounded-3xl flex items-center justify-evenly">
-						<div className="flex items-center gap-12">
+				<section className="md:px-12">
+					<div className="bg-teal-900 p-6 py-12 rounded-3xl flex flex-col md:flex-row space-y-6 md:space-y-0 items-center justify-evenly">
+						<div className="flex flex-col md:flex-row items-center gap-6 md:gap-12">
 							<Send className="text-primary" size={40} />
 							<div>
 								<h2 className="text-2xl text-background font-bold">

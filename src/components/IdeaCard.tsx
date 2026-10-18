@@ -62,23 +62,25 @@ export function IdeaCard({ idea }: { idea: Idea }) {
 	};
 
 	return (
-		<div className="flex flex-col bg-card border rounded-md p-4 relative">
+		<div className="flex flex-col bg-card border rounded-md relative">
 			{idea.postedBy === user?.email && (
-				<div className="absolute right-2 top-2">
+				<div className="self-end">
 					<Popover modal={true}>
 						<PopoverTrigger render={<Button variant="ghost" />}>
 							<MoreHorizontal />
 						</PopoverTrigger>
 						<PopoverContent className={"w-fit"}>
-							<Button
-								className={
-									"text-blue-600 hover:text-blue-600 hover:bg-blue-600/15"
-								}
-								variant={"ghost"}
-							>
-								<Edit />
-								<span>Editar</span>
-							</Button>
+							<Link href={`/editar/${idea.id}`}>
+								<Button
+									className={
+										"flex justify-between w-full text-blue-600 hover:text-blue-600 hover:bg-blue-600/15"
+									}
+									variant={"ghost"}
+								>
+									<Edit />
+									<span>Editar</span>
+								</Button>
+							</Link>
 							<Dialog actionsRef={dialogActions}>
 								<DialogTrigger
 									render={
@@ -115,40 +117,44 @@ export function IdeaCard({ idea }: { idea: Idea }) {
 					</Popover>
 				</div>
 			)}
-			<Link className="flex-1 flex-col" href={`/ideias/${idea.id}`}>
-				<h2 className="text-lg font-semibold">{idea.title}</h2>
-				<p className="text-foreground/80 my-6">{idea.description}</p>
-			</Link>
-			<div className="flex items-center justify-between mt-auto mb-4">
-				<div>
-					{idea?.business_name && (
-						<p className="text-sm">@{idea.business_name}</p>
-					)}
-					<span className="text-xs text-muted-foreground line-clamp-1">
-						{idea.authors.join(", ")}
+			<div className="px-4 pb-4 flex flex-1 flex-col">
+				<Link className="flex-1 flex-col" href={`/ideias/${idea.id}`}>
+					<h2 className="text-lg font-semibold">{idea.title}</h2>
+					<p className="text-foreground/80 my-6 line-clamp-3">
+						{idea.description}
+					</p>
+				</Link>
+				<div className="flex items-center justify-between mt-auto mb-4">
+					<div>
+						{idea?.business_name && (
+							<p className="text-sm">@{idea.business_name}</p>
+						)}
+						<span className="text-xs text-muted-foreground line-clamp-1">
+							{idea.authors.join(", ")}
+						</span>
+					</div>
+					<span className="text-xs text-foreground/70 ">
+						{idea.date.toDate().toLocaleDateString("pt-BR")}
 					</span>
 				</div>
-				<span className="text-xs text-foreground/70 ">
-					{idea.date.toDate().toLocaleDateString("pt-BR")}
-				</span>
-			</div>
-			<div className="flex items-center justify-between text-xs text-center">
-				<div className="rounded-full px-2 py-1 bg-primary w-fit">
-					<span className="text-xs">{idea.sector}</span>
-				</div>
-				<div className="flex items-center">
-					<Button
-						title="Salvar ideia"
-						onClick={() => (likedByUser ? unlikeIdea() : likeIdea())}
-						variant={"ghost"}
-					>
-						<Heart
-							color={likedByUser ? "red" : ""}
-							fill={likedByUser ? "red" : "transparent"}
-							size={18}
-						/>
-					</Button>
-					<span>{idea.likes || 0}</span>
+				<div className="flex items-center justify-between text-xs text-center">
+					<div className="rounded-full px-2 py-1 bg-primary w-fit">
+						<span className="text-xs">{idea.sector}</span>
+					</div>
+					<div className="flex items-center">
+						<Button
+							title="Salvar ideia"
+							onClick={() => (likedByUser ? unlikeIdea() : likeIdea())}
+							variant={"ghost"}
+						>
+							<Heart
+								color={likedByUser ? "red" : ""}
+								fill={likedByUser ? "red" : "transparent"}
+								size={18}
+							/>
+						</Button>
+						<span>{idea.likes || 0}</span>
+					</div>
 				</div>
 			</div>
 		</div>

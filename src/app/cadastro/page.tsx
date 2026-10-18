@@ -1,66 +1,56 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { SubmitEvent, useState } from "react";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
 import { toast } from "@/components/ui/toast";
 import { useAuth } from "@/store/AuthProvider";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
+import {
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@/components/ui/field";
+
+const formSchema = z.object({
+	title: z.string().min(5, "Título deve ter no mínimo 5 caracteres"),
+	description: z.string().min(20, "Descrição deve ter no mínimo 20 caracteres"),
+	sector: z.string().min(1, "Setor é obrigatório"),
+	authors: z.string().min(1, "Autor é obrigatório"),
+	contact: z.string().min(1, "Contato é obrigatório"),
+	business_name: z.string().optional(),
+});
+
 export default function CadastroPage() {
 	const router = useRouter();
 	const user = useAuth();
 
-	const [errors, setErrors] = useState({
-		title: "",
-		description: "",
-		sector: "",
-		authors: "",
-		contact: "",
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			title: "",
+			description: "",
+			sector: "",
+			authors: "",
+			contact: "",
+			business_name: "",
+		},
 	});
 
-	const submitHandler = (e: SubmitEvent) => {
-		e.preventDefault();
-
+	const submitHandler = (data: z.infer<typeof formSchema>) => {
 		if (!user) return;
 
-		const formData = new FormData(e.target);
-		const data = Object.fromEntries(formData.entries()) as {
-			[k: string]: string;
-		};
-
-		let valid = true;
-
-		Object.keys(data).map((k) => {
-			const val = data[k] as string;
-
-			if (k === "business_name") return;
-
-			if (val.trim() === "") {
-				valid = false;
-
-				setErrors((prev) => ({
-					...prev,
-					[k]: "Campo obrigatório",
-				}));
-			} else {
-				setErrors((prev) => ({
-					...prev,
-					[k]: "",
-				}));
-			}
-		});
-
-		if (valid) {
-			submitIdeaFirestore({ ...data, postedBy: user.email! });
-		}
+		submitIdeaFirestore(data);
 	};
 
-	const submitIdeaFirestore = async (data: { [k: string]: string }) => {
+	const submitIdeaFirestore = async (data: z.infer<typeof formSchema>) => {
 		try {
 			const collectionRef = collection(db, "ideas");
 			const id = doc(collectionRef).id;
@@ -68,10 +58,11 @@ export default function CadastroPage() {
 			await setDoc(doc(db, "ideas", id), {
 				...data,
 				id,
-				authors: data["authors"].split(","),
+				authors: data["authors"].replaceAll(", ", ",").split(","),
 				date: new Date(),
 				likedBy: [],
 				dislikedBy: [],
+				postedBy: user!.email,
 				likes: 0,
 				dislikes: 0,
 			});
@@ -96,58 +87,108 @@ export default function CadastroPage() {
 	return (
 		<main className="flex flex-col flex-1 justify-center items-center bg-background p-6">
 			<form
-				onSubmit={submitHandler}
+				onSubmit={form.handleSubmit(submitHandler)}
 				className="bg-card rounded-md p-6 min-w-sm max-w-2xl w-full space-y-6"
 			>
-				<div>
-					<Label htmlFor="title">Título*</Label>
-					<Input id="title" name="title" />
-					<p className="text-destructive text-sm">{errors.title}</p>
-				</div>
-
-				<div>
-					<Label htmlFor="description">Descrição*</Label>
-					<Textarea id="description" name="description" />
-					<p className="text-destructive text-sm">{errors.description}</p>
-				</div>
-
-				<div>
-					<Label htmlFor="sector">Setor*</Label>
-					<Input
-						id="sector"
-						name="sector"
-						placeholder="Ex.: Hospital, restaurante"
+				<FieldGroup>
+					<Controller
+						name="title"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<Field>
+								<FieldLabel htmlFor="title">Título*</FieldLabel>
+								<Input {...field} />
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
+						)}
 					/>
-					<p className="text-destructive text-sm">{errors.sector}</p>
-					<span className="text-muted-foreground text-xs">
-						Caso aplicável em mais de um, separar por vírgula
-					</span>
-				</div>
 
-				<div>
-					<Label htmlFor="business_name">Nome da sua empresa</Label>
-					<Input id="business_name" name="business_name" />
-					<span className="text-muted-foreground text-xs">Opcional</span>
-				</div>
+					<Controller
+						name="description"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<Field>
+								<FieldLabel htmlFor="description">Descrição*</FieldLabel>
+								<Input {...field} />
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
+						)}
+					/>
 
-				<div>
-					<Label htmlFor="authors">Autor*</Label>
-					<Input id="authors" name="authors" />
-					<p className="text-destructive text-sm">{errors.authors}</p>
-					<span className="text-muted-foreground text-xs">
-						Caso haja mais de um, separar por vírgula
-					</span>
-				</div>
+					<Controller
+						name="sector"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<Field>
+								<FieldLabel htmlFor="sector">Setor*</FieldLabel>
+								<Input {...field} placeholder="Ex.: Hospital, restaurante" />
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
+						)}
+					/>
 
-				<div>
-					<Label htmlFor="contact">Contato*</Label>
-					<Input placeholder="Insira seu email" id="contact" name="contact" />
-					<p className="text-destructive text-sm">{errors.contact}</p>
-				</div>
+					<Controller
+						name="authors"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<Field>
+								<FieldLabel htmlFor="authors">Autor*</FieldLabel>
+								<Input
+									{...field}
+									placeholder="Caso haja mais de um, separar por vírgula"
+								/>
+								<FieldDescription>
+									Caso haja mais de um, separar por vírgula
+								</FieldDescription>
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
+						)}
+					/>
 
-				<Button type="submit" className={"cursor-pointer w-full py-6"}>
-					Cadastrar
-				</Button>
+					<Controller
+						name="business_name"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<Field>
+								<FieldLabel htmlFor="business_name">
+									Nome da sua empresa
+								</FieldLabel>
+								<Input {...field} />
+								<FieldDescription>Opcional</FieldDescription>
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
+						)}
+					/>
+
+					<Controller
+						name="contact"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<Field>
+								<FieldLabel htmlFor="contact">Contato*</FieldLabel>
+								<Input {...field} />
+
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
+						)}
+					/>
+
+					<Button type="submit" className={"cursor-pointer w-full py-6"}>
+						Cadastrar
+					</Button>
+				</FieldGroup>
 			</form>
 		</main>
 	);

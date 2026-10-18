@@ -24,7 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 			className={`${geistSans.className} ${geistMono.variable} h-full antialiased`}
 		>
 			<title>InovaSearch</title>
-			<body className="min-h-full flex flex-col bg-background">
+			<body className="min-h-full flex flex-col bg-background relative isolate">
 				<AuthProvider>
 					<Navbar />
 					{children}

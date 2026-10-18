@@ -4,6 +4,18 @@ import { useAuth } from "@/store/AuthProvider";
 import { Button } from "./ui/button";
 import { auth } from "@/lib/firebase";
 
+import {
+	Drawer,
+	DrawerClose,
+	DrawerContent,
+	DrawerDescription,
+	DrawerFooter,
+	DrawerHeader,
+	DrawerTitle,
+	DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Menu, X } from "lucide-react";
+
 export function Navbar() {
 	const user = useAuth();
 
@@ -16,7 +28,7 @@ export function Navbar() {
 						<img src="name.png" alt="" width={100} />
 					</div>
 				</a>
-				<div>
+				<div className="hidden md:block">
 					<ul className="flex items-center justify-between gap-8">
 						<li>
 							<a href="/#como_funciona">Como funciona</a>
@@ -59,11 +71,80 @@ export function Navbar() {
 				<Button
 					onClick={() => auth.signOut()}
 					variant={"outline"}
-					className={"text-foreground"}
+					className={"text-foreground hidden md:block"}
 				>
 					Sair
 				</Button>
 			)}
+			<div className="md:hidden">
+				<Drawer swipeDirection="left">
+					<DrawerTrigger render={<Button variant="outline" />}>
+						<Menu />
+					</DrawerTrigger>
+					<DrawerContent>
+						<DrawerHeader className="flex flex-row justify-between">
+							<DrawerTitle>Menu</DrawerTitle>
+							<DrawerClose render={<Button variant="outline" />}>
+								<X />
+							</DrawerClose>
+						</DrawerHeader>
+						<div className="p-4">
+							<ul className="space-y-4">
+								<li>
+									<a href="/#como_funciona">Como funciona</a>
+								</li>
+
+								<li>
+									<a href="/#vantagens">Vantagens</a>
+								</li>
+								{user && (
+									<li>
+										<a href="/ideias">Ideias</a>
+									</li>
+								)}
+
+								<li>
+									{user && (
+										<Button
+											onClick={() => auth.signOut()}
+											variant={"link"}
+											className={"text-foreground p-0 m-0"}
+										>
+											Sair
+										</Button>
+									)}
+								</li>
+
+								<li>
+									{user && (
+										<a href="/cadastro">
+											<Button
+												className={
+													"p-5 rounded-full cursor-pointer text-popover"
+												}
+											>
+												Cadastrar ideia
+											</Button>
+										</a>
+									)}
+									{!user && (
+										<a href="/auth">
+											<Button
+												className={
+													"p-5 rounded-full cursor-pointer text-popover"
+												}
+											>
+												Entrar
+											</Button>
+										</a>
+									)}
+								</li>
+							</ul>
+						</div>
+						<DrawerFooter></DrawerFooter>
+					</DrawerContent>
+				</Drawer>
+			</div>
 		</nav>
 	);
 }
