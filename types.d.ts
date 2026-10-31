@@ -16,6 +16,7 @@ type Idea = {
 
 type IdeaComment = {
 	id?: string;
+	authorId?: string;
 	pfp: string;
 	from: string;
 	date: import("firebase/firestore").Timestamp | any;

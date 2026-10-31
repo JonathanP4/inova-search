@@ -41,6 +41,7 @@ export default function IdeaDetailsPage({
 			pfp: user.photoURL || "",
 			text: comment,
 			from: user.displayName || "anônimo",
+			authorId: user.uid,
 			likes: 0,
 			dislikes: 0,
 			likedBy: [],
